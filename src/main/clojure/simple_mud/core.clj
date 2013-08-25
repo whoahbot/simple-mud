@@ -7,7 +7,7 @@
   (:gen-class))
 
 (def player-input-channels
-  "An atom containing a map of username to a player's output channel."
+  "An atom containing a map of (keyword username) -> input channel."
   (atom {}))
 
 (defn handler
@@ -18,7 +18,9 @@
             *err* (writer System/err)]
     (let [player-output-channel (chan)
           player-input-channel (chan)]
-      (go (>! player-output-channel "Welcome to simple-mud!"))
+      (println "Welcome to simple-mud!")
+      (println "Please enter your name: ")
+      (swap! player-input-channels assoc (keyword (read-line)) player-input-channel)
       (go (<! player-input-channel (read-line)))
       (try
         (while true
